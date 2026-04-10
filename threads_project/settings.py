@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['threads-clone-1-md4e.onrender.com']
 
 
 # Application definition
