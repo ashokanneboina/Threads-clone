@@ -31,7 +31,9 @@ SECRET_KEY = os.getenv('KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['threads-clone-1-md4e.onrender.com',
-    '127.0.0.1']
+    '127.0.0.1',
+    'threads-clone-xkz9.onrender.com'
+]
 
 
 # Application definition
