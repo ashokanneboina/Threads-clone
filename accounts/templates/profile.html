@@ -3,7 +3,7 @@
 {% block style-content %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }}">
-<link rel="stylesheet" href="{% static 'accounts/styles/css/profile.css' %}?v={{ now|date:'U' }">
+<link rel="stylesheet" href="{% static 'accounts/styles/css/profile.css' %}?v={{ now|date:'U' ">
 {% endblock %}
 
 {% block title %}
@@ -18,13 +18,17 @@
             <div class="username">{{ username }}</div>
             <div class="bio">{{ bio }}</div>
         </div>
-
-        <div class="profile-circle">
-            {% if profile_image %}
-            <img src="data:image/png;base64,{{ profile_image }}">
-            {% else %}
-            <div class="default-avatar"></div>
-            {% endif %}
+        <div class="right">
+            <div class="profile-circle">
+                {% if profile_image %}
+                <img src="data:image/png;base64,{{ profile_image }}">
+                {% else %}
+                <div class="default-avatar"></div>
+                {% endif %}
+            </div>
+            <div class="logout">
+                <a href="{% url 'logout' %}">Logout</a>
+            </div>
         </div>
     </div>
 
@@ -42,7 +46,7 @@
 {% endblock %}
 
 {% block scripts %}
-{% load static %}
 
+{% load static %}
 <script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
 {% endblock %}

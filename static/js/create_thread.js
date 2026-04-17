@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
+    
+    if (!isAuthenticated) {
+        return;  
+    }
     const openBtn = document.getElementById("openModal");
     const closeBtn = document.getElementById("closeModal");
     const modal = document.getElementById("modal");

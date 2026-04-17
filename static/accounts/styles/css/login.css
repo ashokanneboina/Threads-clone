@@ -20,7 +20,7 @@ body {
   color: white
 }
 form {
-  width: 50%;
+  width: 30%;
   height:20%;
   display: flex;
   flex-direction: column;

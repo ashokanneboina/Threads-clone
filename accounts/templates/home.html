@@ -17,6 +17,7 @@
     </div>
 </div>
 </div>
+
 <div id="overlay" class="overlay hidden"></div>
 
 <div id="modal" class="modal hidden">
@@ -38,4 +39,7 @@
         <button id="postBtn">Post</button>
     </div>
 </div>
+<script>
+    const isAuthenticated = "{{ request.user.is_authenticated }}" === "True";
+</script>
 {% endblock %}

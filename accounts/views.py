@@ -53,7 +53,7 @@ def signup_view(request):
             )
             
             login(request,user)
-            return redirect('')
+            return redirect('/')
     return render(request,"signup.html",{"form": form})
     
 @login_required    
@@ -150,11 +150,11 @@ def feed_view(request):
             "is_liked": Like.objects.filter(
                 user=request.user,
                 thread=t
-            ).exists(),
+            ).exists() if request.user.is_authenticated else False,
             "is_saved": Saved.objects.filter(
                 user=request.user,
                 thread=t
-            ).exists()
+            ).exists() if request.user.is_authenticated else False
         })
 
     return render(request, "feed.html", {
@@ -256,7 +256,7 @@ def follow_user(request):
             )
             return JsonResponse({"status": "followed"})
         
-
+@login_required
 def create_thread(request):
     if request.method == "POST":
         content = request.POST.get('content', '').strip()
