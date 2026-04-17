@@ -1,0 +1,20 @@
+{% extends 'home.html' %}
+
+{% block style-content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }}">
+{% endblock %}
+
+{% block title %}
+<span class="sub-heading">Insights</span>
+{% endblock %}
+{% block main-content %}
+<div>
+    Insights
+</div>
+{% endblock %}
+{% block scripts %}
+{% load static %}
+<script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
+
+{% endblock %}

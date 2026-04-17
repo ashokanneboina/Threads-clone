@@ -1,0 +1,17 @@
+    <h4>Follow suggestions</h4>
+    {% for user in users %}
+    <div class="user-card">
+        <img src="data:image/png;base64,{{ user.profile_image }}">
+        <div class="user-info">        
+            <div>{{ user.username }}</div>
+            <div class="small">{{ user.bio }}</div>
+        </div>
+        <button class="follow-btn" data-userid="{{ user.id }}">
+            {% if user.is_following %}
+                Following
+            {% else %}
+                Follow
+            {% endif %}
+        </button>
+    </div>
+    {% endfor %}

@@ -1,0 +1,37 @@
+{% extends 'home.html' %}
+
+{% block style-content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'accounts/styles/css/home_page.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'accounts/styles/css/edit_profile.css' %}">
+{% endblock %}
+
+{% block title %}
+<span class="sub-heading">Profile</span>
+{% endblock %}
+{% block main-content %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="edit-userinfo">
+        <div class="editUserName">
+            <label for="editUserName">Username</label><br>
+            <input
+                type="text"
+                name="editUserName"
+                value="{{ request.user.username }}"
+            >
+        </div>
+            
+        <label  for="imageInput">
+            <img
+                src="data:image/png;base64,{{ profile_pic }}"
+                width="120"
+            >
+        </label>
+        <input type="file" name="profile_image" id="imageInput" hidden>
+    </div>
+    <label for="bio">Bio</label>
+    <textarea name="bio">{{ profile.bio }}</textarea>
+    <button type="submit" class="save">Save</button>
+</form>
+{% endblock %}

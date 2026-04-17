@@ -1,11 +1,21 @@
 {% extends "base.html" %}
 
+{% block style-content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'accounts/styles/css/login.css' %}?v={{ now|date:'U' }}">
+{% endblock %}
+
 {% block content %}
-<div>
+<div class="form-details">
     <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">SignUp</button>
+        <input type="text" name="username" placeholder="Username">
+        <br>
+        <input type="email" name="email" placeholder="Email">
+        <br>
+        <input type="text" name="password" placeholder="Password">
+        <br>
+        <button class="button" type="submit">SignUp</button>
     </form>
 </div>
 {% endblock %}

@@ -1,4 +1,5 @@
 
+from ssl import ALERT_DESCRIPTION_INSUFFICIENT_SECURITY
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 import uuid
@@ -37,5 +38,69 @@ class Profile(models.Model):
     
     profile_pic = models.BinaryField(null=True, blank=True)
     
+
+class Follows(models.Model):
+    """
+    follows model
+    """
+    follow_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    follower_id = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='follower'
+    )
+    following_id = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='following'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('follower_id', 'following_id')
     
     
+
+
+class Thread(models.Model):
+   user = models.ForeignKey(
+       CustomUser,
+       on_delete=models.CASCADE,
+       related_name="threads"
+   )
+   content = models.TextField()
+   image = models.BinaryField(null=True, blank=True)
+   created_at = models.DateTimeField(auto_now_add=True)
+   
+  
+
+class Like(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE
+    )
+    thread = models.ForeignKey(
+        Thread,
+        on_delete=models.CASCADE,
+        related_name="likes"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'thread']
+        
+
+class Saved(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE
+    )
+    thread = models.ForeignKey(
+        Thread,
+        on_delete=models.CASCADE,
+        related_name="saved"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'thread']

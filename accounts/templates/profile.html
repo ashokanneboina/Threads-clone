@@ -1,0 +1,48 @@
+{% extends 'home.html' %}
+
+{% block style-content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }}">
+<link rel="stylesheet" href="{% static 'accounts/styles/css/profile.css' %}?v={{ now|date:'U' }">
+{% endblock %}
+
+{% block title %}
+<span class="sub-heading">Profile</span>
+{% endblock %}
+{% block main-content %}
+
+<div class="profile-container">
+
+    <div class="profile-top">
+        <div class="left">
+            <div class="username">{{ username }}</div>
+            <div class="bio">{{ bio }}</div>
+        </div>
+
+        <div class="profile-circle">
+            {% if profile_image %}
+            <img src="data:image/png;base64,{{ profile_image }}">
+            {% else %}
+            <div class="default-avatar"></div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="stats">
+        <span><b>{{ followers_count }}</b> followers</span>
+        <span><b>{{ following_count }}</b> following</span>
+    </div>
+
+    <a href="{% url 'edit' %}">
+        <button class="edit-button">Edit profile</button>
+    </a>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% load static %}
+
+<script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
+{% endblock %}
