@@ -8,16 +8,18 @@
 {% block content %}
 
 <div class="form-details">
-    Log in
+    <div class="login-title">Log in</div>
+
     <form method="POST">
-        {% csrf_token%}
+        {% csrf_token %}
         <input type="text" name="username" placeholder="Username, Phone or Email">
-        <br>
-        <input type="text" name="password" placeholder="Password">
-        <br>
-        <button class="button"type="submit">Login</button>
+        <input type="password" name="password" placeholder="Password">
+
+        <button class="button" type="submit">Login</button>
     </form>
-    <div>
+
+    <div class="signup-link">
+        Don't have an account? 
         <a href="{% url 'signup' %}">Sign up</a>
     </div>
 </div>

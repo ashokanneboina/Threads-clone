@@ -5,166 +5,192 @@
 }
 
 body {
-  background-color: black;
-  color: white;
+  background-color: #000;
+  color: #f5f5f5;
   padding: 2vh;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
+/* Layout */
 .main-home {
   display: flex;
   flex-direction: row;
   height: 96vh;
-  gap: 15vw;
+  gap: 12vw;
 }
+
+/* Scroll area */
 .view-page {
-    flex: 1;
-    overflow-y: auto;
+  flex: 1;
+  overflow-y: auto;
 }
 .view-page::-webkit-scrollbar {
-    display: none;                /* Chrome, Safari */
+  display: none;
 }
+
+/* Sidebar */
 .nav {
   display: flex;
   flex-direction: column;
-  flex: 0 0 20%;
-  gap: 1rem;
-  border: 1px solid gray;
-  border-radius: 10px;
-  padding: 5%;
-
+  flex: 0 0 18%;
+  gap: 0.5rem;
+  border: 1px solid #222;
+  border-radius: 14px;
+  padding: 20px;
+  background: #0a0a0a;
 }
 
 .nav div {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 8px;
-    font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: 0.2s ease;
 }
+
+.nav div:hover {
+  background: #111;
+}
+
 .nav img {
-    width: 20px;
-    height: 20px;
+  width: 22px;
+  height: 22px;
+  opacity: 0.85;
 }
+
+/* Buttons */
 .postsButton {
-  background-color: black;
+  background-color: transparent;
   border: none;
   cursor: pointer;
 }
 
-
+/* Main content */
 .main-content {
-  max-width: 700px;
+  max-width: 680px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-right: 300px;
-  min-width: 500px;
+  margin-right: 280px;
+  min-width: 480px;
 }
 
 .main-content .view-page {
-  border: 1px solid gray;
-  border-radius: 10px;
+  border: 1px solid #222;
+  border-radius: 14px;
   height: 95%;
-  
+  background: #0a0a0a;
 }
 
+/* Modal */
 .hidden {
-    display: none;
+  display: none;
 }
 
 .modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    
-    width: 430px;
-    background: #fff;
-    border-radius: 16px;
-    padding: 1rem;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  width: 430px;
+  background: #111;
+  border-radius: 18px;
+  padding: 1.2rem;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  border: 1px solid #222;
 }
 
 .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
 .close-btn {
-    background:  #fff;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #fff;
 }
 
 .modal-body {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .user-row {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
 }
-
-
 
 .modal textarea {
-    flex: 1;
-    border: none;
-    outline: none;
-    resize: none;
-    font-size: 15px;
-    min-height: 80px;
+  flex: 1;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 15px;
+  min-height: 80px;
+  background: transparent;
+  color: #fff;
 }
 
+/* Actions */
 .actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
 }
 
 .actions button {
-    padding: 6px 16px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
+  padding: 6px 18px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
 }
 
-#closeModal {
-    background: #eee;
-}
-
+/* Buttons */
 #postBtn {
-    background: #000;
-    color: #fff;
+  background: #fff;
+  color: #000;
+  font-weight: 600;
 }
 
+#postBtn:hover {
+  background: #ddd;
+}
+
+/* File input */
 #threadImage {
   font-size: 13px;
-  color: #555;
+  color: #888;
   margin-top: 5px;
 }
+
 #threadImage::file-selector-button {
-    background: #f1f1f1;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    margin-right: 10px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-right: 10px;
+  color: #fff;
 }
 
 #threadImage::file-selector-button:hover {
-    background: #e0e0e0;
+  background: #222;
 }
