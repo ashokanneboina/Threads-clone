@@ -1,21 +1,22 @@
 {% extends "base.html" %}
-
 {% block style-content %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'accounts/styles/css/login.css' %}?v={{ now|date:'U' }}">
+    {% load static %}
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/login.css' %}?v={{ now|date:'U' }}">
 {% endblock %}
-
 {% block content %}
-<div class="form-details">
-    <form method="POST">
-        {% csrf_token %}
-        <input type="text" name="username" placeholder="Username">
-        <br>
-        <input type="email" name="email" placeholder="Email">
-        <br>
-        <input type="text" name="password" placeholder="Password">
-        <br>
-        <button class="button" type="submit">SignUp</button>
-    </form>
-</div>
+    <div class="form-details">
+        {% if form.username.errors %}<div class="error-message">{{ form.username.errors }}</div>{% endif %}
+        {% if form.email.errors %}<div class="error-message">{{ form.email.errors }}</div>{% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username">
+            <br>
+            <input type="email" name="email" placeholder="Email">
+            <br>
+            <input type="text" name="password" placeholder="Password">
+            <br>
+            <button class="button" type="submit">SignUp</button>
+        </form>
+    </div>
 {% endblock %}

@@ -1,45 +1,32 @@
 {% extends "base.html" %}
-
-
 {% block content %}
-<div class="main-home">
-
-<div class="nav">
-{% load static %}
-{% include 'nav.html' %}
-</div>
-<div class="main-content">
-    {% block title %}
-    {% endblock %}
-    <div class="view-page">
-    {% block main-content %}
-    {% endblock %}
-    </div>
-</div>
-</div>
-
-<div id="overlay" class="overlay hidden"></div>
-
-<div id="modal" class="modal hidden">
-    <div class="modal-header">
-        <span>Create Thread</span>
-        <button id="closeModal" class="close-btn">×</button>
-    </div>
-
-    <div class="modal-body">
-        <div class="user-row">
-            <textarea id="threadText" placeholder="Start a thread..."></textarea>
+    <div class="main-home">
+        <div class="nav">
+            {% load static %}
+            {% include 'nav.html' %}
         </div>
-
-        <input type="file" id="threadImage">
+        <div class="main-content">
+            {% block title %}{% endblock %}
+            <div class="view-page">
+                {% block main-content %}{% endblock %}
+            </div>
+        </div>
     </div>
-
-    <div class="actions">
-
-        <button id="postBtn">Post</button>
+    <div id="overlay" class="overlay hidden"></div>
+    <div id="modal" class="modal hidden">
+        <div class="modal-header">
+            <span>Create Thread</span>
+            <button id="closeModal" class="close-btn">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="user-row">
+                <textarea id="threadText" placeholder="Start a thread..."></textarea>
+            </div>
+            <input type="file" id="threadImage">
+        </div>
+        <div class="actions">
+            <button id="postBtn">Post</button>
+        </div>
     </div>
-</div>
-<script>
-    const isAuthenticated = "{{ request.user.is_authenticated }}" === "True";
-</script>
+    <script>const isAuthenticated = "{{ request.user.is_authenticated }}" === "True";</script>
 {% endblock %}

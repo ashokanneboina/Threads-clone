@@ -1,21 +1,16 @@
 {% extends 'home.html' %}
-
 {% block style-content %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }}">
+    {% load static %}
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }}">
 {% endblock %}
-
-{% block title %}
-<span class="sub-heading">Activity</span>
-{% endblock %}
+{% block title %}<span class="sub-heading">Activity</span>{% endblock %}
 {% block main-content %}
-<div>
-    <h2>Activity</h2>
-</div>
+    <div>
+        <h2>Activity</h2>
+    </div>
 {% endblock %}
-
 {% block scripts %}
-{% load static %}
-<script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
-
+    {% load static %}
+    <script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
 {% endblock %}

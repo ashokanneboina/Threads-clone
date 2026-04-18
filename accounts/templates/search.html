@@ -1,26 +1,25 @@
 {% extends 'home.html' %}
-
 {% block style-content %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }}">
-<link rel="stylesheet" href="{% static 'accounts/styles/css/search.css' %}?v={{ now|date:'U' }}">
+    {% load static %}
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }}">
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/search.css' %}?v={{ now|date:'U' }}">
 {% endblock %}
-
-{% block title %}
-<span class="sub-heading">Search</span>
-{% endblock %}
+{% block title %}<span class="sub-heading">Search</span>{% endblock %}
 {% block main-content %}
-<div class="search-bar" >
-    <input type="text" id="searchInput" name="q" placeholder="search.." value="{{ request.GET.q }}">
-</div>
-<div id="results">
-{% include 'partials/user_list.html' %}
-</div>
+    <div class="search-bar">
+        <input type="text"
+               id="searchInput"
+               name="q"
+               placeholder="search.."
+               value="{{ request.GET.q }}">
+    </div>
+    <div id="results">{% include 'partials/user_list.html' %}</div>
 {% endblock %}
-
 {% block scripts %}
-{% load static %}
-<script src="{% static 'js/follow.js' %}?v={{ now|date:'U' }}"></script>
-<script src="{% static 'js/search_function.js' %}?v={{ now|date:'U' }}"></script>
-<script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
+    {% load static %}
+    <script src="{% static 'js/follow.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/search_function.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
 {% endblock %}

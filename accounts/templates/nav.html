@@ -1,7 +1,7 @@
 {% load static %}
 <div>
     <img src="{% static 'images/svgs/threads_logo.svg' %}">
-        Threads
+    Threads
 </div>
 <div>
     <a href="{% url 'feed' %}">
@@ -22,15 +22,20 @@
     Search
 </div>
 <div>
-    <a href="{% url 'activity' %}"><img src="{% static 'images/svgs/like_logo.svg' %}"></a>
+    <a href="{% url 'activity' %}">
+        <img src="{% static 'images/svgs/like_logo.svg' %}">
+    </a>
     Activity
 </div>
 <div>
-    <a href="{% url 'profile' %}"><img src="{% static 'images/svgs/profile_logo.svg' %}"></a>
+    <a href="{% url 'profile' %}">
+        <img src="{% static 'images/svgs/profile_logo.svg' %}">
+    </a>
     Profile
 </div>
-
 <div>
-    <a href="{% url 'saved' %}"><img src="{% static 'images/svgs/saved_logo.svg' %}"></a>
+    <a href="{% url 'saved' %}">
+        <img src="{% static 'images/svgs/saved_logo.svg' %}">
+    </a>
     Saved
 </div>

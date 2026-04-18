@@ -48,6 +48,7 @@ def logout_view(request):
 
 def signup_view(request):
     form = SignupForm()
+    error = ""
     if request.method == "POST":
         form = SignupForm(request.POST)
 
@@ -55,14 +56,24 @@ def signup_view(request):
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
             email = form.cleaned_data["email"]
+            if CustomUser.objects.filter(username=username).exists():
+                form.add_error("username", "Username already taken")
 
-            user = CustomUser.objects.create_user(
-                username=username, password=password, email=email
-            )
+           
+            elif CustomUser.objects.filter(email=email).exists():
+                form.add_error("email", "Email already registered")
 
-            login(request, user)
-            return redirect("/")
-    return render(request, "signup.html", {"form": form})
+            else:
+                user = CustomUser.objects.create_user(
+                    username=username, password=password, email=email
+                )
+    
+                login(request, user)
+                return redirect("/")
+    return render(request, "signup.html", {
+        "form": form,
+        "error": error
+    })
 
 
 @login_required

@@ -1,8 +1,8 @@
-    <h4>Follow suggestions</h4>
-    {% for user in users %}
+<h4>Follow suggestions</h4>
+{% for user in users %}
     <div class="user-card">
         <img src="data:image/png;base64,{{ user.profile_image }}">
-        <div class="user-info">        
+        <div class="user-info">
             <div>{{ user.username }}</div>
             <div class="small">{{ user.bio }}</div>
         </div>
@@ -14,4 +14,4 @@
             {% endif %}
         </button>
     </div>
-    {% endfor %}
+{% endfor %}

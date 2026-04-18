@@ -1,70 +1,53 @@
 {% extends 'home.html' %}
-
 {% block style-content %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }">
-<link rel="stylesheet" href="{% static 'accounts/styles/css/feed_page.css' %}?v={{ now|date:'U' }">
+    {% load static %}
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }">
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/feed_page.css' %}?v={{ now|date:'U' }">
 {% endblock %}
-
-{% block title %}
-<span class="sub-heading">For you</span>
-{% endblock %}
+{% block title %}<span class="sub-heading">For you</span>{% endblock %}
 {% block main-content %}
-<div class="feed">
-    {% for thread in threads %}
-    <div class="thread-card">
-
-        <div class="thread-top">
-            <img src="data:image/png;base64,{{ thread.profile_image }}" class="avatar">
-
-            <div class="user-info">
-                <div class="username">{{ thread.username }}</div>
-                <div class="time">{{ thread.created_at }}</div>
+    <div class="feed">
+        {% for thread in threads %}
+            <div class="thread-card">
+                <div class="thread-top">
+                    <img src="data:image/png;base64,{{ thread.profile_image }}" class="avatar">
+                    <div class="user-info">
+                        <div class="username">{{ thread.username }}</div>
+                        <div class="time">{{ thread.created_at }}</div>
+                    </div>
+                </div>
+                <div class="thread-content">{{ thread.content }}</div>
+                {% if thread.image %}<img src="data:image/png;base64,{{ thread.image }}" class="thread-img">{% endif %}
+                <div class="thread-actions">
+                    <div class="action-item like-btn {% if thread.is_liked %}liked{% endif %}"
+                         data-id="{{ thread.id }}">
+                        <img src="{% if thread.is_liked %} {% static 'images/svgs/redlike_logo.svg' %} {% else %} {% static 'images/svgs/like_logo.svg' %} {% endif %}"
+                             class="like-icon"
+                             data-liked="{% static 'images/svgs/redlike_logo.svg' %}"
+                             data-unliked="{% static 'images/svgs/like_logo.svg' %}">
+                        <span class="like-count">{{ thread.likes_count }}</span>
+                    </div>
+                    <div>
+                        <img src="{% static 'images/svgs/comment_logo.svg' %}">
+                        <span>{{ thread.comments_count }}</span>
+                    </div>
+                    <div class="action-item save-btn {% if thread.is_saved %}saved{% endif %}"
+                         data-id="{{ thread.id }}">
+                        <img src="{% if thread.is_saved %} {% static 'images/svgs/saved_filled.svg' %} {% else %} {% static 'images/svgs/saved_logo.svg' %} {% endif %}"
+                             class="save-icon"
+                             data-saved="{% static 'images/svgs/saved_filled.svg' %}"
+                             data-unsaved="{% static 'images/svgs/saved_logo.svg' %}">
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div class="thread-content">
-            {{ thread.content }}
-        </div>
-
-        {% if thread.image %}
-        <img src="data:image/png;base64,{{ thread.image }}" class="thread-img">
-        {% endif %}
-        <div class="thread-actions">
-            <div class="action-item like-btn {% if thread.is_liked %}liked{% endif %}" data-id="{{ thread.id }}">
-                <img 
-                    src="{% if thread.is_liked %}
-                            {% static 'images/svgs/redlike_logo.svg' %}
-                         {% else %}
-                            {% static 'images/svgs/like_logo.svg' %}
-                         {% endif %}"
-                    class="like-icon"
-                    data-liked="{% static 'images/svgs/redlike_logo.svg' %}"
-                    data-unliked="{% static 'images/svgs/like_logo.svg' %}">
-                <span class="like-count">{{ thread.likes_count }}</span>
-            </div>
-            <div><img src="{% static 'images/svgs/comment_logo.svg' %}">
-            <span>{{ thread.comments_count }}</span>
-            </div>
-            <div class="action-item save-btn {% if thread.is_saved %}saved{% endif %}" data-id="{{ thread.id }}"> 
-                <img 
-                    src="{% if thread.is_saved %}
-                            {% static 'images/svgs/saved_filled.svg' %}
-                         {% else %}
-                            {% static 'images/svgs/saved_logo.svg' %}
-                         {% endif %}"
-                    class="save-icon"
-                    data-saved="{% static 'images/svgs/saved_filled.svg' %}"
-                    data-unsaved="{% static 'images/svgs/saved_logo.svg' %}">     
-            </div>
-        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 {% endblock %}
 {% block scripts %}
-{% load static %}
-<script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
-<script src="{% static 'js/like_toggle.js' %}?v={{ now|date:'U' }}"></script>
-<script src="{% static 'js/save_toggle.js' %}?v={{ now|date:'U' }}"></script>
+    {% load static %}
+    <script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/like_toggle.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/save_toggle.js' %}?v={{ now|date:'U' }}"></script>
 {% endblock %}
