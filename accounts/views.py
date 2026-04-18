@@ -16,19 +16,27 @@ def home_view(request):
     return render(request, 'home.html',{'user': user})
 def login_view(request):
     form = LoginForm()
+    error = None
+
     if request.method == "POST":
         form = LoginForm(request.POST)
+
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-        
+
             user = authenticate(request, username=username, password=password)
+
             if user:
                 login(request, user)
                 return redirect('/')
             else:
-                return render(request,"login.html")
-    return render(request,"login.html",{"form": form})
+                error = "Invalid username or password"
+
+    return render(request, "login.html", {
+        "form": form,
+        "error": error
+    })
 
 
 @login_required
