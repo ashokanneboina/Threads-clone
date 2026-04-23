@@ -2,7 +2,6 @@ from django.urls import path
 
 from .views import (
     follow_user,
-    insights_view,
     login_view,
     logout_view,
     signup_view,
@@ -12,11 +11,16 @@ from .views import (
 )
 from .views import (
     activity_view,
+    chat_detail_view,
+    chat_list_view,
     saved_view,
     edit_view,
     create_thread,
+    start_chat_view,
     toggle_like,
     toggle_save,
+    thread_detail,
+    create_comment,
 )
 
 urlpatterns = [
@@ -26,12 +30,17 @@ urlpatterns = [
     path("profile/", profile_view, name="profile"),
     path("search/", search_view, name="search"),
     path("", feed_view, name="feed"),
+    path("chat/", chat_list_view, name="chat_list"),
+    path("chat/start/<uuid:user_id>/", start_chat_view, name="start_chat"),
+    path("chat/<uuid:conversation_id>/", chat_detail_view, name="chat_detail"),
     path("activity/", activity_view, name="activity"),
-    path("insights/", insights_view, name="insights"),
     path("saved/", saved_view, name="saved"),
     path("edit/", edit_view, name="edit"),
     path("follow_user/", follow_user, name="follow_user"),
     path("create-thread/", create_thread),
     path("like/<int:thread_id>/", toggle_like),
     path("save/<int:thread_id>/", toggle_save),
+    # urls.py
+    path("thread/<int:thread_id>/", thread_detail, name="thread_detail"),
+    path("thread/<int:thread_id>/comment/", create_comment, name="create_comment"),
 ]

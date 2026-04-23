@@ -1,0 +1,26 @@
+{% load static %}
+<div class="mobile-nav-item">
+    <a href="{% url 'feed' %}" aria-label="For you">
+        <img src="{% static 'images/svgs/for_you_logo.svg' %}" alt="For you">
+    </a>
+</div>
+<div class="mobile-nav-item">
+    <a href="{% url 'chat_list' %}" aria-label="Chats">
+        <img src="{% static 'images/svgs/chat_logo.svg' %}" alt="Chats">
+    </a>
+</div>
+<div class="mobile-nav-item">
+    <button id="mobileOpenModal" class="postsButton" aria-label="New thread">
+        <img src="{% static 'images/svgs/new_thread.svg' %}" alt="New thread">
+    </button>
+</div>
+<div class="mobile-nav-item">
+    <a href="{% url 'activity' %}" aria-label="Activity">
+        <img src="{% static 'images/svgs/like_logo.svg' %}" alt="Activity">
+    </a>
+</div>
+<div class="mobile-nav-item">
+    <a href="{% url 'profile' %}" aria-label="Profile">
+        <img src="{% static 'images/svgs/profile_logo.svg' %}" alt="Profile">
+    </a>
+</div>

@@ -1,0 +1,179 @@
+
+.comment {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+    align-items: flex-start;
+}
+
+
+.comment-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.comment-left .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #222;
+    z-index: 2;
+}
+
+
+.thread-line {
+    width: 2px;
+    background: #1a1a1a;
+    flex: 1;
+    margin-top: 6px;
+}
+
+.comment:last-child .thread-line {
+    display: none;
+}
+
+
+.comment-right {
+    flex: 1;
+    padding-top: 2px;
+}
+
+
+.comment-bubble {
+    color: #e6e6e6;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+.comment-bubble .username {
+    font-weight: 600;
+    color: #fff;
+    margin-right: 6px;
+}
+
+
+.comment-actions {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    color: #888;
+    margin-top: 6px;
+}
+
+.reply-btn {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.reply-btn:hover {
+    color: #fff;
+}
+
+
+.replies {
+    margin-left: 20px;
+    margin-top: 10px;
+    padding-left: 8px;
+    border-left: 1px solid #1a1a1a;
+}
+
+.reply-box form {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.reply-box input {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 18px;
+    border: none;
+    background: #111;
+    color: #fff;
+    font-size: 13px;
+}
+
+.reply-box button {
+    padding: 6px 12px;
+    border-radius: 18px;
+    border: none;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.comment:hover {
+    background: #0a0a0a;
+    border-radius: 10px;
+    padding: 6px;
+}
+
+
+.thread-top {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.thread-user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.thread-content {
+    margin-top: 6px;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.comment-input-container {
+    padding: 14px 16px;
+}
+
+#comment-form {
+    display: flex;
+    gap: 10px;
+}
+
+#comment-form input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 20px;
+    border: none;
+    background: #111;
+    color: #fff;
+}
+
+#comment-form button {
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: none;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+}
+
+
+.no-comments {
+    color: #777;
+    text-align: center;
+    margin-top: 20px;
+}
+
+
+body {
+    background-color: #000;
+    color: #fff;
+}
+
+.thread-img {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 12px;
+    margin-top: 12px;
+    object-fit: cover;
+}

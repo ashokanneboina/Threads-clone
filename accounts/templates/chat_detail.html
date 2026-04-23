@@ -1,0 +1,54 @@
+{% extends 'home.html' %}
+{% block style-content %}
+    {% load static %}
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }}">
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/chat.css' %}?v={{ now|date:'U' }}">
+{% endblock %}
+{% block title %}<span class="sub-heading">Chat</span>{% endblock %}
+{% block main-content %}
+    <div class="chat-detail-page">
+        <div class="chat-detail-header">
+            <a href="{% url 'chat_list' %}" class="back-link">Back</a>
+            <div class="chat-detail-user">
+                {% if other_profile_image %}
+                    <img src="data:image/png;base64,{{ other_profile_image }}" alt="{{ other_username }}">
+                {% else %}
+                    <div class="avatar-placeholder"></div>
+                {% endif %}
+                <div>
+                    <h2>{{ other_username }}</h2>
+                    <p>Direct messages</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="messages-wrapper">
+            {% for message in messages %}
+                <div class="message-row {% if message.is_own %}own{% endif %}">
+                    <div class="message-bubble">
+                        <span class="message-sender">{{ message.sender_username }}</span>
+                        <p>{{ message.content }}</p>
+                        <small>{{ message.created_at|timesince }} ago</small>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state message-empty">
+                    <h3>Say hello</h3>
+                    <p>This conversation is ready for its first message.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <form method="post" class="message-form">
+            {% csrf_token %}
+            <textarea name="content" placeholder="Write a message..." required></textarea>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {% load static %}
+    <script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
+{% endblock %}

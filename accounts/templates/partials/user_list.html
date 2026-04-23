@@ -13,5 +13,8 @@
                 Follow
             {% endif %}
         </button>
+        {% if user.can_message %}
+            <a href="{% url 'start_chat' user.id %}" class="message-link">Message</a>
+        {% endif %}
     </div>
 {% endfor %}

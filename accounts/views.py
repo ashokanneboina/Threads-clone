@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
-from accounts.models import CustomUser, Profile, Follows, Thread, Like, Saved
+from accounts.models import CustomUser, Profile, Follows, Thread, Like, Saved, Notification, Comment
 from .forms import LoginForm, SignupForm
 from django.contrib.auth.decorators import login_required
 
@@ -12,10 +12,6 @@ import base64
 
 # Create your views here.
 
-
-def home_view(request):
-    user = request.user
-    return render(request, "home.html", {"user": user})
 
 
 def login_view(request):
@@ -135,9 +131,51 @@ def search_view(request):
         return render(request, "partials/user_list.html", {"users": users_with_info})
     return render(request, "search.html", {"users": users_with_info})
 
-
+@login_required
 def activity_view(request):
-    return render(request, "activity.html")
+
+    notifications = Notification.objects.filter(
+        receiver=request.user
+    ).select_related('sender', 'sender__profile', 'thread').order_by('-created_at')
+
+
+    following_users = set(
+        Follows.objects.filter(follower_id=request.user)
+        .values_list('following_id', flat=True)
+    )
+
+    activity_data = []
+
+    for n in notifications:
+
+
+        is_following = n.sender.id in following_users
+
+
+        profile_pic = None
+        if hasattr(n.sender, 'profile') and n.sender.profile.profile_pic:
+            profile_pic = base64.b64encode(
+                n.sender.profile.profile_pic
+            ).decode('utf-8')
+
+        activity_data.append({
+            "id": n.id,
+            "type": n.notification_type,
+            "sender_username": n.sender.username,
+            "sender_id": n.sender.id,
+            "profile_pic": profile_pic, 
+            "thread_id": n.thread.id if n.thread else None,
+            "is_read": n.is_read,
+            "time": n.created_at,
+            "is_following": is_following,
+        })
+
+
+    notifications.filter(is_read=False).update(is_read=True)
+
+    return render(request, 'activity.html', {
+        'notifications': activity_data
+    })
 
 
 def feed_view(request):
@@ -175,16 +213,15 @@ def feed_view(request):
                     if request.user.is_authenticated
                     else False
                 ),
+                "comments_count": t.comments.count(),
             }
         )
 
     return render(request, "feed.html", {"threads": threads_data})
 
 
-def insights_view(request):
-    return render(request, "insights.html")
 
-
+@login_required
 def saved_view(request):
 
     saved_threads = Thread.objects.filter(saved__user=request.user).order_by(
@@ -220,7 +257,7 @@ def saved_view(request):
 
     return render(request, "saved.html", {"threads": threads_data})
 
-
+@login_required
 def edit_view(request):
     profile = Profile.objects.get(user=request.user)
     profile_image = None
@@ -265,6 +302,11 @@ def follow_user(request):
             Follows.objects.create(
                 follower_id=request.user, following_id=user_to_follow
             )
+            Notification.objects.create(
+                sender=request.user,
+                receiver=user_to_follow,
+                notification_type='follow'
+            )
             return JsonResponse({"status": "followed"})
 
 
@@ -282,23 +324,47 @@ def create_thread(request):
     return JsonResponse({"status": "error"})
 
 
+
+
 @login_required
 def toggle_like(request, thread_id):
     if request.method == "POST":
         thread = Thread.objects.get(id=thread_id)
 
-        like, created = Like.objects.get_or_create(user=request.user, thread=thread)
+        like, created = Like.objects.get_or_create(
+            user=request.user,
+            thread=thread
+        )
 
         if not created:
             like.delete()
-            return JsonResponse(
-                {"status": "unliked", "likes_count": thread.likes.count()}
+
+            Notification.objects.filter(
+                sender=request.user,
+                receiver=thread.user,
+                notification_type='like',
+                thread=thread
+            ).delete()
+
+            return JsonResponse({
+                "status": "unliked",
+                "likes_count": thread.likes.count()
+            })
+
+        if thread.user != request.user:   
+            Notification.objects.create(
+                sender=request.user,
+                receiver=thread.user,
+                notification_type='like',
+                thread=thread
             )
 
-        return JsonResponse({"status": "liked", "likes_count": thread.likes.count()})
+        return JsonResponse({
+            "status": "liked",
+            "likes_count": thread.likes.count()
+        })
 
     return JsonResponse({"status": "error"})
-
 
 @login_required
 def toggle_save(request, thread_id):
@@ -312,5 +378,59 @@ def toggle_save(request, thread_id):
             return JsonResponse({"status": "unsaved"})
 
         return JsonResponse({"status": "saved"})
+
+    return JsonResponse({"status": "error"})
+
+
+
+@login_required
+def thread_detail(request, thread_id):
+    thread = Thread.objects.get(id=thread_id)
+
+    profile_image = None
+    thread_image = None
+
+    if thread.user.profile.profile_pic:
+        profile_image = base64.b64encode(
+            thread.user.profile.profile_pic
+        ).decode("utf-8")
+
+    if thread.image:
+        thread_image = base64.b64encode(
+            thread.image
+        ).decode("utf-8")
+
+    comments = Comment.objects.filter(
+        thread=thread,
+        parent__isnull=True
+    ).select_related('user').prefetch_related('replies')
+
+    return render(request, "thread_detail.html", {
+        "thread": thread,
+        "profile_image": profile_image,
+        "thread_image": thread_image,   # ✅ FIXED
+        "comments": comments
+    })
+
+@login_required
+def create_comment(request, thread_id):
+    if request.method == "POST":
+        content = request.POST.get("content")
+        parent_id = request.POST.get("parent_id")
+
+        thread = Thread.objects.get(id=thread_id)
+
+        parent = None
+        if parent_id:
+            parent = Comment.objects.get(id=parent_id)
+
+        Comment.objects.create(
+            user=request.user,
+            thread=thread,
+            parent=parent,
+            content=content
+        )
+
+        return JsonResponse({"status": "success"})
 
     return JsonResponse({"status": "error"})

@@ -1,0 +1,80 @@
+{% extends 'home.html' %}
+{% block style-content %}
+    {% load static %}
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }}">
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/chat.css' %}?v={{ now|date:'U' }}">
+{% endblock %}
+{% block title %}<span class="sub-heading">Chats</span>{% endblock %}
+{% block main-content %}
+    <div class="chat-page">
+        <section class="chat-panel">
+            <div class="chat-panel-header">
+                <h2>Recent conversations</h2>
+                <p>Open an existing chat or start a new one.</p>
+            </div>
+            <div class="chat-list">
+                {% for conversation in conversations %}
+                    <a href="{% url 'chat_detail' conversation.id %}" class="chat-list-item">
+                        <div class="chat-avatar">
+                            {% if conversation.other_profile_image %}
+                                <img src="data:image/png;base64,{{ conversation.other_profile_image }}" alt="{{ conversation.other_username }}">
+                            {% else %}
+                                <div class="avatar-placeholder"></div>
+                            {% endif %}
+                        </div>
+                        <div class="chat-meta">
+                            <div class="chat-topline">
+                                <span class="chat-name">{{ conversation.other_username }}</span>
+                                {% if conversation.last_message_time %}
+                                    <span class="chat-time">{{ conversation.last_message_time|timesince }} ago</span>
+                                {% endif %}
+                            </div>
+                            <p class="chat-preview">{{ conversation.last_message }}</p>
+                        </div>
+                    </a>
+                {% empty %}
+                    <div class="empty-state">
+                        <h3>No conversations yet</h3>
+                        <p>Start one from the people list below.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="chat-panel">
+            <div class="chat-panel-header">
+                <h2>People to message</h2>
+                <p>Only mutual followers can start direct messages.</p>
+            </div>
+            <div class="chat-list">
+                {% for user in users %}
+                    <div class="chat-list-item user-start-card">
+                        <div class="chat-avatar">
+                            {% if user.profile_image %}
+                                <img src="data:image/png;base64,{{ user.profile_image }}" alt="{{ user.username }}">
+                            {% else %}
+                                <div class="avatar-placeholder"></div>
+                            {% endif %}
+                        </div>
+                        <div class="chat-meta">
+                            <span class="chat-name">{{ user.username }}</span>
+                            <p class="chat-preview">{{ user.bio|default:"No bio yet" }}</p>
+                        </div>
+                        <a href="{% url 'start_chat' user.id %}" class="chat-action">Message</a>
+                    </div>
+                {% empty %}
+                    <div class="empty-state">
+                        <h3>No mutuals yet</h3>
+                        <p>Follow each other first to unlock messaging.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {% load static %}
+    <script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
+{% endblock %}

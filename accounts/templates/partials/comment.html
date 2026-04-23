@@ -1,0 +1,32 @@
+<div class="comment">
+
+    <!-- LEFT -->
+    <div class="comment-left">
+        <div class="avatar"></div>
+        <div class="thread-line"></div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="comment-right">
+
+        <div class="comment-bubble">
+            <span class="username">{{ comment.user.username }}</span>
+            <span>{{ comment.content }}</span>
+        </div>
+
+        <div class="comment-actions">
+            <span>{{ comment.created_at|timesince }} ago</span>
+            <span class="reply-btn" onclick="showReplyBox('{{ comment.id }}')">Reply</span>
+        </div>
+
+        <div id="reply-box-{{ comment.id }}" class="reply-box"></div>
+
+        <div class="replies">
+            {% for reply in comment.replies.all %}
+                {% include "partials/comment.html" with comment=reply %}
+            {% endfor %}
+        </div>
+
+    </div>
+
+</div>

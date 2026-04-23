@@ -1,0 +1,47 @@
+{% load static %}
+<div class="nav-brand">
+    <img src="{% static 'images/svgs/threads_logo.svg' %}" alt="Threads">
+    <span class="nav-brand-label">Threads</span>
+</div>
+<div class="nav-item nav-feed">
+    <a href="{% url 'feed' %}">
+        <img src="{% static 'images/svgs/for_you_logo.svg' %}" alt="For you">
+        <span class="nav-label">For you</span>
+    </a>
+</div>
+<div class="nav-item nav-thread">
+    <button id="openModal" class="postsButton">
+        <img src="{% static 'images/svgs/new_thread.svg' %}" alt="New thread">
+        <span class="nav-label">New thread</span>
+    </button>
+</div>
+<div class="nav-item nav-search">
+    <a href="{% url 'search' %}">
+        <img src="{% static 'images/svgs/search_logo.svg' %}" alt="Search">
+        <span class="nav-label">Search</span>
+    </a>
+</div>
+<div class="nav-item nav-chat">
+    <a href="{% url 'chat_list' %}">
+        <img src="{% static 'images/svgs/chat_logo.svg' %}" alt="Chats">
+        <span class="nav-label">Chats</span>
+    </a>
+</div>
+<div class="nav-item nav-activity">
+    <a href="{% url 'activity' %}">
+        <img src="{% static 'images/svgs/like_logo.svg' %}" alt="Activity">
+        <span class="nav-label">Activity</span>
+    </a>
+</div>
+<div class="nav-item nav-profile">
+    <a href="{% url 'profile' %}">
+        <img src="{% static 'images/svgs/profile_logo.svg' %}" alt="Profile">
+        <span class="nav-label">Profile</span>
+    </a>
+</div>
+<div class="nav-item nav-saved">
+    <a href="{% url 'saved' %}">
+        <img src="{% static 'images/svgs/saved_logo.svg' %}" alt="Saved">
+        <span class="nav-label">Saved</span>
+    </a>
+</div>

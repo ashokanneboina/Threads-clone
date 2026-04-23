@@ -4,7 +4,9 @@
     <link rel="stylesheet"
           href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }">
     <link rel="stylesheet"
-          href="{% static 'accounts/styles/css/feed_page.css' %}?v={{ now|date:'U' }">
+          href="{% static 'accounts/styles/css/feed_page.css' %}?v=2000">
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/comment_section.css' %}?v={{ now|date:'U' }">
 {% endblock %}
 {% block title %}<span class="sub-heading">For you</span>{% endblock %}
 {% block main-content %}
@@ -29,9 +31,11 @@
                              data-unliked="{% static 'images/svgs/like_logo.svg' %}">
                         <span class="like-count">{{ thread.likes_count }}</span>
                     </div>
-                    <div>
-                        <img src="{% static 'images/svgs/comment_logo.svg' %}">
-                        <span>{{ thread.comments_count }}</span>
+                    <div class="comment-section">
+                        <a href="{% url 'thread_detail' thread.id %}" class="comment-link">
+                            <img src="{% static 'images/svgs/comment_logo.svg' %}">
+                            <span>{{ thread.comments_count }}</span> 
+                        </a>
                     </div>
                     <div class="action-item save-btn {% if thread.is_saved %}saved{% endif %}"
                          data-id="{{ thread.id }}">
@@ -50,4 +54,5 @@
     <script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
     <script src="{% static 'js/like_toggle.js' %}?v={{ now|date:'U' }}"></script>
     <script src="{% static 'js/save_toggle.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/comment.js' %}?v={{ now|date:'U' }}"></script>
 {% endblock %}

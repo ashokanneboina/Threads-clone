@@ -1,16 +1,85 @@
 {% extends 'home.html' %}
+
 {% block style-content %}
     {% load static %}
     <link rel="stylesheet"
           href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }}">
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/activity_page.css' %}?v={{ now|date:'U' }}">
 {% endblock %}
-{% block title %}<span class="sub-heading">Activity</span>{% endblock %}
+
+{% block title %}
+<span class="sub-heading">Activity</span>
+{% endblock %}
+
 {% block main-content %}
-    <div>
-        <h2>Activity</h2>
+<div class="activity-wrapper">
+    <div class="activity-list">
+        {% for n in notifications %}
+            <div class="activity-item {% if not n.is_read %}unread{% endif %}">
+
+                <div class="activity-avatar">
+                    {% if n.profile_pic %}
+                        <img src="data:image/png;base64,{{ n.profile_pic }}" alt="profile">
+                    {% else %}
+                        <div class="avatar-placeholder"></div>
+                    {% endif %}
+                </div>
+
+
+                <div class="activity-content">
+
+                    {% if n.type == 'follow' %}
+                        <p class="activity-text">
+                            <strong>{{ n.sender_username }}</strong>
+                            <span>started following you</span>
+                        </p>
+
+                    {% elif n.type == 'like' %}
+                        <p class="activity-text">
+                            <strong>{{ n.sender_username }}</strong>
+                            <span>liked your thread</span>
+                        </p>
+                    {% endif %}
+
+                    <small class="activity-time">
+                        {{ n.time|timesince }} ago
+                    </small>
+
+                </div>
+
+
+                <div class="activity-action">
+
+                    {% if n.type == 'follow' %}
+                        <button 
+                            class="follow-btn {% if n.is_following %}following{% endif %}" 
+                            data-userid="{{ n.sender_id }}"
+                        >
+                            {% if n.is_following %}
+                                Following
+                            {% else %}
+                                Follow
+                            {% endif %}
+                        </button>
+
+                    {% elif n.type == 'like' %}
+                        <div class="like-indicator">❤️</div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+        {% empty %}
+            <p class="no-activity">No activity yet</p>
+        {% endfor %}
     </div>
+
+</div>
 {% endblock %}
+
 {% block scripts %}
     {% load static %}
     <script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
+        <script src="{% static 'js/follow.js' %}?v={{ now|date:'U' }}"></script>
 {% endblock %}
