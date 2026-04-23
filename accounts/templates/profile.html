@@ -4,7 +4,9 @@
     <link rel="stylesheet"
           href="{% static 'accounts/styles/css/home_page.css' %}?v={{ now|date:'U' }}">
     <link rel="stylesheet"
-          href="{% static 'accounts/styles/css/profile.css' %}?v={{ now|date:'U' ">
+          href="{% static 'accounts/styles/css/feed_page.css' %}?v={{ now|date:'U' }}">
+    <link rel="stylesheet"
+          href="{% static 'accounts/styles/css/profile.css' %}?v={{ now|date:'U' }}">
 {% endblock %}
 {% block title %}<span class="sub-heading">Profile</span>{% endblock %}
 {% block main-content %}
@@ -35,8 +37,93 @@
             <button class="edit-button">Edit profile</button>
         </a>
     </div>
+
+    <div class="profile-tabs">
+        <a class="tab {% if active_tab == 'threads' %}active{% endif %}"
+           href="{% url 'profile' %}?tab=threads">Threads</a>
+        <a class="tab {% if active_tab == 'replies' %}active{% endif %}"
+           href="{% url 'profile' %}?tab=replies">Replies</a>
+    </div>
+
+    {% if active_tab == 'threads' %}
+        <div class="profile-feed">
+            {% for thread in threads %}
+                <div class="thread-card">
+                    <div class="thread-top">
+                        {% if thread.profile_image %}
+                            <img src="data:image/png;base64,{{ thread.profile_image }}" class="avatar">
+                        {% else %}
+                            <div class="avatar default-avatar"></div>
+                        {% endif %}
+                        <div class="user-info">
+                            <div class="username">{{ thread.username }}</div>
+                            <div class="time">{{ thread.created_at }}</div>
+                        </div>
+                    </div>
+                    <div class="thread-content">{{ thread.content }}</div>
+                    {% if thread.image %}<img src="data:image/png;base64,{{ thread.image }}" class="thread-img">{% endif %}
+                    <div class="thread-actions">
+                        <div class="action-item like-btn {% if thread.is_liked %}liked{% endif %}"
+                             data-id="{{ thread.id }}">
+                            <img src="{% if thread.is_liked %} {% static 'images/svgs/redlike_logo.svg' %} {% else %} {% static 'images/svgs/like_logo.svg' %} {% endif %}"
+                                 class="like-icon"
+                                 data-liked="{% static 'images/svgs/redlike_logo.svg' %}"
+                                 data-unliked="{% static 'images/svgs/like_logo.svg' %}">
+                            <span class="like-count">{{ thread.likes_count }}</span>
+                        </div>
+                        <div class="comment-section">
+                            <a href="{% url 'thread_detail' thread.id %}" class="comment-link">
+                                <img src="{% static 'images/svgs/comment_logo.svg' %}">
+                                <span>{{ thread.comments_count }}</span>
+                            </a>
+                        </div>
+                        <div class="action-item save-btn {% if thread.is_saved %}saved{% endif %}"
+                             data-id="{{ thread.id }}">
+                            <img src="{% if thread.is_saved %} {% static 'images/svgs/saved_filled.svg' %} {% else %} {% static 'images/svgs/saved_logo.svg' %} {% endif %}"
+                                 class="save-icon"
+                                 data-saved="{% static 'images/svgs/saved_filled.svg' %}"
+                                 data-unsaved="{% static 'images/svgs/saved_logo.svg' %}">
+                        </div>
+                        <form class="delete-thread-form"
+                              action="{% url 'delete_thread' thread.id %}"
+                              method="post"
+                              onsubmit="return confirm('Delete this thread?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'profile' %}?tab=threads">
+                            <button type="submit" class="delete-btn">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="empty-state">No threads yet.</p>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="profile-replies">
+            {% for reply in replies %}
+                <div class="reply-card">
+                    <div class="reply-meta">
+                        Replied to
+                        <a href="{% url 'thread_detail' reply.thread_id %}">
+                            @{{ reply.thread_username }}
+                        </a>
+                        <span class="dot">·</span>
+                        <span class="time">{{ reply.created_at }}</span>
+                    </div>
+                    <div class="reply-content">{{ reply.content }}</div>
+                    <a class="reply-thread" href="{% url 'thread_detail' reply.thread_id %}">
+                        View thread: {{ reply.thread_content|truncatechars:110 }}
+                    </a>
+                </div>
+            {% empty %}
+                <p class="empty-state">No replies yet.</p>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
 {% block scripts %}
     {% load static %}
     <script src="{% static 'js/create_thread.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/like_toggle.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/save_toggle.js' %}?v={{ now|date:'U' }}"></script>
 {% endblock %}

@@ -21,6 +21,7 @@ from .views import (
     toggle_save,
     thread_detail,
     create_comment,
+    delete_thread,
 )
 
 urlpatterns = [
@@ -43,4 +44,5 @@ urlpatterns = [
     # urls.py
     path("thread/<int:thread_id>/", thread_detail, name="thread_detail"),
     path("thread/<int:thread_id>/comment/", create_comment, name="create_comment"),
+    path("thread/<int:thread_id>/delete/", delete_thread, name="delete_thread"),
 ]

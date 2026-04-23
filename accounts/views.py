@@ -1,12 +1,13 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
-from accounts.models import CustomUser, Profile, Follows, Thread, Like, Saved, Notification, Comment
+from accounts.models import CustomUser, Profile, Follows, Thread, Like, Saved, Notification, Comment, Conversation, Message
 from .forms import LoginForm, SignupForm
 from django.contrib.auth.decorators import login_required
 
 
 from django.utils.timesince import timesince
+from django.db.models import Count
 
 import base64
 
@@ -76,6 +77,9 @@ def signup_view(request):
 def profile_view(request):
     user = request.user
     profile = user.profile
+    active_tab = request.GET.get("tab", "threads")
+    if active_tab not in {"threads", "replies"}:
+        active_tab = "threads"
 
     profile_image = None
     if profile.profile_pic:
@@ -87,12 +91,85 @@ def profile_view(request):
 
     following_count = Follows.objects.filter(follower_id=user).count()
 
+    threads_data = []
+    replies_data = []
+
+    if active_tab == "threads":
+        threads = list(
+            Thread.objects.filter(user=user)
+            .annotate(
+                likes_count=Count("likes", distinct=True),
+                comments_count=Count("comments", distinct=True),
+            )
+            .order_by("-created_at")
+        )
+
+        thread_ids = [t.id for t in threads]
+        liked_ids = set(
+            Like.objects.filter(user=request.user, thread_id__in=thread_ids).values_list(
+                "thread_id", flat=True
+            )
+        )
+        saved_ids = set(
+            Saved.objects.filter(
+                user=request.user, thread_id__in=thread_ids
+            ).values_list("thread_id", flat=True)
+        )
+
+        for t in threads:
+            thread_image = None
+            if t.image:
+                thread_image = base64.b64encode(t.image).decode("utf-8")
+
+            threads_data.append(
+                {
+                    "username": t.user.username,
+                    "profile_image": profile_image,
+                    "content": t.content,
+                    "image": thread_image,
+                    "created_at": timesince(t.created_at) + " ago",
+                    "likes_count": t.likes_count,
+                    "id": t.id,
+                    "is_liked": t.id in liked_ids,
+                    "is_saved": t.id in saved_ids,
+                    "comments_count": t.comments_count,
+                }
+            )
+    else:
+        replies = (
+            Comment.objects.filter(user=user)
+            .select_related("thread", "thread__user", "thread__user__profile")
+            .order_by("-created_at")
+        )
+
+        for c in replies:
+            thread_profile_image = None
+            if c.thread.user.profile.profile_pic:
+                thread_profile_image = base64.b64encode(
+                    c.thread.user.profile.profile_pic
+                ).decode("utf-8")
+
+            replies_data.append(
+                {
+                    "id": c.id,
+                    "content": c.content,
+                    "created_at": timesince(c.created_at) + " ago",
+                    "thread_id": c.thread.id,
+                    "thread_content": c.thread.content,
+                    "thread_username": c.thread.user.username,
+                    "thread_profile_image": thread_profile_image,
+                }
+            )
+
     context = {
         "username": user.username,
         "profile_image": profile_image,
         "bio": profile.bio,
         "followers_count": followers_count,
         "following_count": following_count,
+        "active_tab": active_tab,
+        "threads": threads_data,
+        "replies": replies_data,
     }
 
     return render(request, "profile.html", context)
@@ -323,6 +400,20 @@ def create_thread(request):
             return JsonResponse({"status": "success"})
     return JsonResponse({"status": "error"})
 
+@login_required
+def delete_thread(request, thread_id):
+    if request.method != "POST":
+        return JsonResponse({"status": "error"}, status=405)
+
+    thread = get_object_or_404(Thread, id=thread_id, user=request.user)
+    thread.delete()
+
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({"status": "success"})
+
+    next_url = request.POST.get("next") or request.META.get("HTTP_REFERER") or "/profile/"
+    return redirect(next_url)
+
 
 
 
@@ -434,3 +525,106 @@ def create_comment(request, thread_id):
         return JsonResponse({"status": "success"})
 
     return JsonResponse({"status": "error"})
+
+
+@login_required
+def chat_list_view(request):
+    conversations = Conversation.objects.filter(participants=request.user).prefetch_related('messages', 'participants')
+
+    conversations_data = []
+
+    for conv in conversations:
+        other_participants = conv.participants.exclude(id=request.user.id)
+        if other_participants.exists():
+            other_user = other_participants.first()
+            last_message = conv.messages.last()
+
+            profile_image = None
+            if other_user.profile.profile_pic:
+                profile_image = base64.b64encode(other_user.profile.profile_pic).decode('utf-8')
+
+            conversations_data.append({
+                'id': conv.id,
+                'other_username': other_user.username,
+                'other_profile_image': profile_image,
+                'last_message': last_message.content if last_message else '',
+                'last_message_time': last_message.created_at if last_message else None,
+            })
+
+    # Get mutual followers
+    following_ids = Follows.objects.filter(follower_id=request.user).values_list('following_id', flat=True)
+    followers_ids = Follows.objects.filter(following_id=request.user).values_list('follower_id', flat=True)
+    mutual_ids = set(following_ids) & set(followers_ids)
+
+    users = CustomUser.objects.filter(id__in=mutual_ids).exclude(id=request.user.id)
+
+    users_data = []
+    for user in users:
+        profile_image = None
+        if user.profile.profile_pic:
+            profile_image = base64.b64encode(user.profile.profile_pic).decode('utf-8')
+
+        users_data.append({
+            'id': user.id,
+            'username': user.username,
+            'profile_image': profile_image,
+            'bio': user.profile.bio,
+        })
+
+    return render(request, 'chat_list.html', {'conversations': conversations_data, 'users': users_data})
+
+
+@login_required
+def chat_detail_view(request, conversation_id):
+    conversation = get_object_or_404(Conversation, id=conversation_id, participants=request.user)
+
+    other_participants = conversation.participants.exclude(id=request.user.id)
+    other_user = other_participants.first()
+
+    other_profile_image = None
+    if other_user.profile.profile_pic:
+        other_profile_image = base64.b64encode(other_user.profile.profile_pic).decode('utf-8')
+
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            Message.objects.create(conversation=conversation, sender=request.user, content=content)
+            return redirect('chat_detail', conversation_id=conversation.id)
+
+    messages = conversation.messages.select_related('sender')
+
+    messages_data = []
+    for msg in messages:
+        messages_data.append({
+            'sender_username': msg.sender.username,
+            'content': msg.content,
+            'created_at': msg.created_at,
+            'is_own': msg.sender == request.user,
+        })
+
+    return render(request, 'chat_detail.html', {
+        'messages': messages_data,
+        'other_username': other_user.username,
+        'other_profile_image': other_profile_image,
+    })
+
+
+@login_required
+def start_chat_view(request, user_id):
+    other_user = get_object_or_404(CustomUser, id=user_id)
+
+    # Check if mutual follow
+    is_following = Follows.objects.filter(follower_id=request.user, following_id=other_user).exists()
+    is_followed_by = Follows.objects.filter(follower_id=other_user, following_id=request.user).exists()
+
+    if not (is_following and is_followed_by):
+        return redirect('chat_list')
+
+    # Get or create conversation
+    conversation = Conversation.objects.filter(participants=request.user).filter(participants=other_user).first()
+
+    if not conversation:
+        conversation = Conversation.objects.create()
+        conversation.participants.add(request.user, other_user)
+
+    return redirect('chat_detail', conversation_id=conversation.id)
